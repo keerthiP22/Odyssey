@@ -1,11 +1,12 @@
+import WelcomeHeader from "@/components/dashboard/WelcomeHeader";
+import StatsGrid from "@/components/dashboard/StatsGrid";
+
 export default function Dashboard() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Dashboard</h1>
+    <div className="space-y-8">
+      <WelcomeHeader />
 
-      <p className="text-muted-foreground">
-        Welcome back! Here's your overview for today.
-      </p>
+      <StatsGrid />
     </div>
   );
 }
