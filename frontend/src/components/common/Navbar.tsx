@@ -1,14 +1,35 @@
-import { Bell, Search, UserCircle2 } from "lucide-react";
+import { Bell, Moon, Search, UserCircle2 } from "lucide-react";
 
 export default function Navbar() {
   return (
-    <header className="h-16 border-b flex items-center justify-between px-6">
-      <h1 className="text-xl font-bold">Odyssey</h1>
+    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background px-6">
+      {/* Search */}
+      <div className="relative w-full max-w-md">
+        <Search
+          size={18}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+        />
 
-      <div className="flex items-center gap-5">
-        <Search className="cursor-pointer" />
-        <Bell className="cursor-pointer" />
-        <UserCircle2 size={32} className="cursor-pointer" />
+        <input
+          type="text"
+          placeholder="Search..."
+          className="w-full rounded-xl border bg-background py-2 pl-10 pr-4 outline-none transition focus:ring-2 focus:ring-primary"
+        />
+      </div>
+
+      {/* Right Actions */}
+      <div className="flex items-center gap-3">
+        <button className="rounded-xl p-2 transition hover:bg-muted">
+          <Moon size={20} />
+        </button>
+
+        <button className="rounded-xl p-2 transition hover:bg-muted">
+          <Bell size={20} />
+        </button>
+
+        <button className="rounded-full transition hover:opacity-90">
+          <UserCircle2 size={36} />
+        </button>
       </div>
     </header>
   );
