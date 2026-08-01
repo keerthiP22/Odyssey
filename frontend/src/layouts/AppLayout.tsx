@@ -1,20 +1,23 @@
 import { Outlet } from "react-router-dom";
 
-import Sidebar from "@/components/common/Sidebar";
 import Navbar from "@/components/common/Navbar";
+import Sidebar from "@/components/common/Sidebar";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 
 export default function AppLayout() {
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
+    <SidebarProvider>
+      <div className="min-h-screen bg-background">
+        <Sidebar />
 
-      <div className="flex flex-1 flex-col">
-        <Navbar />
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
 
-        <main className="flex-1 overflow-y-auto p-6">
-          <Outlet />
-        </main>
+          <main className="flex-1 p-6">
+            <Outlet />
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
