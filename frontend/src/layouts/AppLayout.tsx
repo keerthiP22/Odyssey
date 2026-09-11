@@ -1,12 +1,20 @@
 import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
 
 import Navbar from "@/components/common/Navbar";
 import Sidebar from "@/components/common/Sidebar";
 import MobileNavigation from "@/layouts/MobileNavigation";
 
 import { SidebarProvider } from "@/contexts/SidebarContext";
+import { useTimeOfDay } from "@/hooks/useTimeOfDay";
 
 export default function AppLayout() {
+  const timeOfDay = useTimeOfDay();
+
+  useEffect(() => {
+    document.documentElement.dataset.timeOfDay = timeOfDay;
+  }, [timeOfDay]);
+
   return (
     <SidebarProvider>
       <div className="relative flex min-h-screen overflow-hidden bg-[#0B1020] text-white">
