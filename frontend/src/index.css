@@ -7,6 +7,10 @@
 }
 
 :root {
+  --odyssey-bg-deep: #0b1020;
+  --odyssey-bg-mid: #11172a;
+  --odyssey-glow: rgba(111, 91, 210, 0.1);
+
   --background: #0b1020;
   --foreground: #f2f0f2;
 
@@ -69,16 +73,44 @@ body {
   background:
     radial-gradient(
       circle at 50% -20%,
-      rgba(111, 91, 210, 0.1),
+      var(--odyssey-glow),
       transparent 38%
     ),
-    #0b1020;
+    linear-gradient(150deg, var(--odyssey-bg-mid), var(--odyssey-bg-deep) 58%);
+
+  transition:
+    background 700ms ease,
+    color 700ms ease;
 
   overflow-x: hidden;
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+html[data-time-of-day="morning"] {
+  --odyssey-bg-deep: #10162a;
+  --odyssey-bg-mid: #1a2038;
+  --odyssey-glow: rgba(235, 176, 116, 0.16);
+}
+
+html[data-time-of-day="day"] {
+  --odyssey-bg-deep: #0d1425;
+  --odyssey-bg-mid: #17213a;
+  --odyssey-glow: rgba(112, 143, 224, 0.14);
+}
+
+html[data-time-of-day="evening"] {
+  --odyssey-bg-deep: #0d1222;
+  --odyssey-bg-mid: #1b192d;
+  --odyssey-glow: rgba(213, 126, 105, 0.14);
+}
+
+html[data-time-of-day="night"] {
+  --odyssey-bg-deep: #080c18;
+  --odyssey-bg-mid: #0e1425;
+  --odyssey-glow: rgba(91, 91, 194, 0.09);
 }
 
 /*
