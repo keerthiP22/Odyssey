@@ -51,6 +51,14 @@ function convertTask(task: Task): PlannerTask {
   };
 }
 
+function getTodayDateTime(time: string) {
+  const today = new Date();
+  const [hours, minutes] = time.split(":").map(Number);
+
+  today.setHours(hours, minutes, 0, 0);
+  return today.toISOString();
+}
+
 export default function DailyPlan() {
   const [tasks, setTasks] = useState<PlannerTask[]>([]);
   const [taskName, setTaskName] = useState("");
@@ -152,7 +160,8 @@ export default function DailyPlan() {
 
       const createdTask = await createTask(
         trimmedName,
-        0
+        0,
+        getTodayDateTime(taskTime)
       );
 
       const plannerTask: PlannerTask = {
@@ -305,21 +314,6 @@ export default function DailyPlan() {
             </h2>
           </div>
 
-          {completedCount > 0 && (
-            <button
-              type="button"
-              onClick={() =>
-                setTasks((current) =>
-                  current.filter(
-                    (task) => !task.completed
-                  )
-                )
-              }
-              className="min-h-11 rounded-lg px-3 text-xs font-medium text-[#727C91] transition hover:bg-white/[0.04] hover:text-[#AEB5C6]"
-            >
-              Clear completed
-            </button>
-          )}
         </div>
 
         <div className="mt-5 space-y-2.5">
