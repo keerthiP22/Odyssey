@@ -4,6 +4,8 @@ import AppLayout from "@/layouts/AppLayout";
 import Home from "@/pages/Home";
 import DailyPlan from "@/components/home/DailyPlan";
 import Coach from "@/pages/Coach";
+import GoalsPage from "@/Goals/GoalsPage";
+import JournalPage from "@/Journal/JournalPage";
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -15,11 +17,10 @@ export default function AppRouter() {
 
           <Route path="/planner" element={<DailyPlan />} />
 
-          {/* Temporary */}
-          <Route path="/journal" element={<Home />} />
+          <Route path="/journal" element={<JournalPage />} />
           <Route path="/analytics" element={<Home />} />
           <Route path="/coach" element={<Coach />} />
-          <Route path="/goals" element={<Home />} />
+          <Route path="/goals" element={<GoalsPage />} />
           <Route path="/settings" element={<Home />} />
         </Route>
       </Routes>
