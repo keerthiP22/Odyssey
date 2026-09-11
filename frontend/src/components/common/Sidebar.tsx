@@ -1,99 +1,128 @@
 import {
   Home,
   Target,
+  CalendarDays,
   BookOpen,
   Bot,
   BarChart3,
   Settings,
 } from "lucide-react";
 
-import { useEffect } from "react";
-import { useSidebar } from "@/contexts/SidebarContext";
 import Logo from "./Logo";
 import SidebarItem from "./SidebarItem";
+import { useSidebar } from "@/contexts/SidebarContext";
 
 export default function Sidebar() {
-  const { isOpen, closeSidebar } = useSidebar();
-useEffect(() => {
-  const handleEscape = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      closeSidebar();
-    }
-  };
+  const { isSidebarOpen } = useSidebar();
 
-  document.addEventListener("keydown", handleEscape);
-
-  return () => {
-    document.removeEventListener("keydown", handleEscape);
-  };
-}, [closeSidebar]);
   return (
-    <>
-      {/* Overlay */}
-      {isOpen && (
-        <div
-          onClick={closeSidebar}
-          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-md backdrop-blur-sm transition-opacity"
-        />
-      )}
+    <aside
+      className={`
+        relative
+        z-40
+        flex
+        h-screen
+        flex-shrink-0
+        flex-col
+        overflow-hidden
+        border-r border-white/[0.06]
+        bg-[#0D1422]
+        transition-[width] duration-300 ease-out
+        ${isSidebarOpen ? "w-[228px]" : "w-[72px]"}
+      `}
+    >
+      {/* Header */}
 
-      {/* Sidebar */}
-      <aside
-        className={`fixed left-0 top-0 z-50 flex h-screen w-[320px] flex-col border-r bg-background px-5 py-6 rounded-r-3xl shadow-2xl transition-transform duration-500 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+      <div
+        className={`
+          flex h-[96px] shrink-0 items-center
+          ${isSidebarOpen ? "px-5" : "justify-center px-3"}
+        `}
       >
-        {/* Logo */}
-        <Logo />
+        <Logo collapsed={!isSidebarOpen} />
+      </div>
 
-        {/* Navigation */}
-        <nav className="mt-10 flex flex-1 flex-col gap-2">
+      <div className="mx-5 h-px bg-white/[0.055]" />
+
+      {/* Navigation */}
+
+      <nav
+        className={`
+          flex flex-1 flex-col
+          ${isSidebarOpen ? "px-3 py-6" : "items-center px-2 py-5"}
+        `}
+      >
+        <div className="flex flex-col gap-1.5">
           <SidebarItem
-            to="/dashboard"
-            label="Dashboard"
+            to="/home"
             icon={Home}
+            label="Home"
           />
 
           <SidebarItem
             to="/goals"
-            label="Goals"
             icon={Target}
+            label="Goals"
+          />
+
+          <SidebarItem
+            to="/planner"
+            icon={CalendarDays}
+            label="Planner"
           />
 
           <SidebarItem
             to="/journal"
-            label="Journal"
             icon={BookOpen}
+            label="Journal"
           />
 
           <SidebarItem
             to="/coach"
-            label="AI Coach"
             icon={Bot}
+            label="JARVIS"
           />
 
           <SidebarItem
             to="/analytics"
-            label="Analytics"
             icon={BarChart3}
+            label="Analytics"
           />
-
-          <SidebarItem
-            to="/settings"
-            label="Settings"
-            icon={Settings}
-          />
-        </nav>
-
-        {/* User Profile */}
-        <div className="mt-auto rounded-2xl border p-4">
-          <h3 className="font-semibold">Keerthi Prada</h3>
-
-          <p className="text-sm text-muted-foreground">
-            AI Engineer
-          </p>
         </div>
-      </aside>
-    </>
+      </nav>
+
+      {/* Bottom */}
+
+      <div
+        className={`
+          shrink-0 border-t border-white/[0.055]
+          ${isSidebarOpen ? "px-3 pb-4 pt-4" : "px-2 pb-4 pt-4"}
+        `}
+      >
+        <SidebarItem
+          to="/settings"
+          icon={Settings}
+          label="Settings"
+        />
+
+        {isSidebarOpen && (
+          <div className="mt-3 flex items-center gap-3 rounded-xl px-3 py-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-sm font-medium text-violet-200">
+              K
+            </div>
+
+            <div className="min-w-0">
+              <p className="truncate text-sm font-medium text-slate-200">
+                Keerthi
+              </p>
+
+              <p className="mt-0.5 truncate text-[11px] text-slate-500">
+                Odyssey Explorer
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </aside>
   );
 }

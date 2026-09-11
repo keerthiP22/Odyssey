@@ -1,59 +1,95 @@
-import { Menu, Bell, Moon, Search, UserCircle2 } from "lucide-react";
-import { useSidebar } from "@/contexts/SidebarContext";
+import {
+  Bell,
+  MoonStar,
+  Search,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+
 export default function Navbar() {
-  const { toggleSidebar } = useSidebar();
+  const [time, setTime] = useState("");
+
+  useEffect(() => {
+    const updateClock = () => {
+      setTime(
+        new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
+    };
+
+    updateClock();
+
+    const interval = setInterval(updateClock, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background px-6">
-      <div className="flex items-center gap-4 flex-1">
-  <button
-    onClick={toggleSidebar}
-    className="rounded-xl p-2 transition hover:bg-muted"
-  >
-    <Menu size={20} />
-  </button>
+    <header className="flex h-12 items-center justify-end sm:h-16">
+      {/* Desktop Search */}
+      <div className="hidden flex-1 justify-center xl:flex">
+        <div className="flex w-[360px] items-center gap-3 rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-3">
+          <Search
+            size={18}
+            className="text-slate-500"
+          />
 
-  <div className="relative w-full max-w-md">
-    <Search
-      size={18}
-      className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-    />
-
-    <input
-      type="text"
-      placeholder="Search..."
-      className="w-full rounded-xl border bg-background py-2 pl-10 pr-4 outline-none transition focus:ring-2 focus:ring-primary"
-    />
-  </div>
-</div>
-
-      {/* Search */}
-      <div className="relative w-full max-w-md">
-        <Search
-          size={18}
-          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-        />
-
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-full rounded-xl border bg-background py-2 pl-10 pr-4 outline-none transition focus:ring-2 focus:ring-primary"
-        />
+          <input
+            type="search"
+            placeholder="Search..."
+            aria-label="Search"
+            className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
+          />
+        </div>
       </div>
 
-      {/* Right Actions */}
-      <div className="flex items-center gap-3">
-        <button className="rounded-xl p-2 transition hover:bg-muted">
-          <Moon size={20} />
+      {/* Mobile */}
+      <div className="flex items-center gap-2 sm:hidden">
+        <button
+          type="button"
+          aria-label="Search"
+          className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 transition hover:bg-white/5 hover:text-white"
+        >
+          <Search size={19} />
         </button>
 
-        <button className="rounded-xl p-2 transition hover:bg-muted">
-          <Bell size={20} />
+        <button
+          type="button"
+          aria-label="Profile"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 font-semibold text-white"
+        >
+          K
+        </button>
+      </div>
+
+      {/* Desktop / Tablet Right */}
+      <div className="hidden items-center gap-3 sm:flex">
+        <span className="hidden text-sm text-slate-400 lg:block">
+          {time}
+        </span>
+
+        <button
+          type="button"
+          aria-label="Toggle appearance"
+          className="rounded-xl p-2 text-slate-400 transition hover:bg-white/5 hover:text-violet-300"
+        >
+          <MoonStar size={18} />
         </button>
 
-        <button className="rounded-full transition hover:opacity-90">
-          <UserCircle2 size={36} />
+        <button
+          type="button"
+          aria-label="Notifications"
+          className="relative rounded-xl p-2 text-slate-400 transition hover:bg-white/5 hover:text-white"
+        >
+          <Bell size={18} />
+
+          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-violet-400" />
         </button>
+
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 font-semibold text-white">
+          K
+        </div>
       </div>
     </header>
   );

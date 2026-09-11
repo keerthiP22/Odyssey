@@ -1,27 +1,26 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import AppLayout from "@/layouts/AppLayout";
-
-import Dashboard from "@/pages/Dashboard";
-import Goals from "@/pages/Goals";
-import Journal from "@/pages/Journal";
+import Home from "@/pages/Home";
+import DailyPlan from "@/components/home/DailyPlan";
 import Coach from "@/pages/Coach";
-import Analytics from "@/pages/Analytics";
-import Settings from "@/pages/Settings";
-
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<AppLayout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route index element={<Navigate to="/home" replace />} />
 
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/goals" element={<Goals />} />
-          <Route path="/journal" element={<Journal />} />
+          <Route path="/home" element={<Home />} />
+
+          <Route path="/planner" element={<DailyPlan />} />
+
+          {/* Temporary */}
+          <Route path="/journal" element={<Home />} />
+          <Route path="/analytics" element={<Home />} />
           <Route path="/coach" element={<Coach />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/goals" element={<Home />} />
+          <Route path="/settings" element={<Home />} />
         </Route>
       </Routes>
     </BrowserRouter>

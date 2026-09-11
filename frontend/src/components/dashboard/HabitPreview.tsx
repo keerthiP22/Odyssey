@@ -5,26 +5,39 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+import GlassPanel from "@/components/common/GlassPanel";
+
+interface Habit {
+  id: number;
+  title: string;
+  streak: string;
+  done: boolean;
+}
+
 export default function HabitPreview() {
-  const [habits, setHabits] = useState([
+  const [habits, setHabits] = useState<Habit[]>([
     {
       id: 1,
       title: "Drink Water",
+      streak: "18 days",
       done: true,
     },
     {
       id: 2,
-      title: "Workout",
+      title: "Morning Workout",
+      streak: "9 days",
       done: true,
     },
     {
       id: 3,
-      title: "Read 20 mins",
+      title: "Read 20 Minutes",
+      streak: "4 days",
       done: false,
     },
     {
       id: 4,
       title: "Journal",
+      streak: "12 days",
       done: true,
     },
   ]);
@@ -39,64 +52,91 @@ export default function HabitPreview() {
     );
   }
 
-  const completed = habits.filter((habit) => habit.done).length;
-
+  const completed = habits.filter((h) => h.done).length;
   const progress = (completed / habits.length) * 100;
 
   return (
-    <section className="rounded-3xl border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-lg">
-      <div className="mb-6 flex items-center gap-2">
-        <Flame className="h-5 w-5 text-orange-500" />
+    <GlassPanel className="p-8">
+      {/* Header */}
 
-        <h2 className="text-xl font-semibold">
-          Today's Habits
+      <div className="mb-8">
+        <div className="flex items-center gap-2 text-orange-300">
+          <Flame size={18} />
+
+          <span className="text-sm uppercase tracking-[0.25em]">
+            Daily Rituals
+          </span>
+        </div>
+
+        <h2 className="mt-3 text-2xl font-semibold text-white">
+          Habits
         </h2>
       </div>
 
-      <div className="space-y-3">
+      {/* Habits */}
+
+      <div className="space-y-4">
         {habits.map((habit) => (
           <button
             key={habit.id}
             onClick={() => toggleHabit(habit.id)}
-            className="flex w-full items-center justify-between rounded-xl border p-3 text-left transition hover:bg-muted"
+            className="flex w-full items-center justify-between rounded-2xl bg-white/[0.03] px-4 py-4 transition hover:bg-white/[0.06]"
           >
-            <span
-              className={
-                habit.done
-                  ? "line-through text-muted-foreground"
-                  : ""
-              }
-            >
-              {habit.title}
-            </span>
+            <div className="flex items-center gap-4">
+              {habit.done ? (
+                <CheckCircle2
+                  size={22}
+                  className="text-emerald-400"
+                />
+              ) : (
+                <Circle
+                  size={22}
+                  className="text-slate-500"
+                />
+              )}
 
-            {habit.done ? (
-              <CheckCircle2 className="h-6 w-6 text-green-500" />
-            ) : (
-              <Circle className="h-6 w-6 text-muted-foreground" />
-            )}
+              <div className="text-left">
+                <h3
+                  className={`font-medium ${
+                    habit.done
+                      ? "line-through text-slate-500"
+                      : "text-white"
+                  }`}
+                >
+                  {habit.title}
+                </h3>
+
+                <p className="text-xs text-slate-500">
+                  {habit.streak}
+                </p>
+              </div>
+            </div>
           </button>
         ))}
       </div>
 
-      <div className="mt-6">
-        <div className="mb-2 flex justify-between text-sm">
-          <span>Progress</span>
+      {/* Progress */}
 
-          <span>
+      <div className="mt-8">
+        <div className="mb-3 flex items-center justify-between text-sm">
+          <span className="text-slate-400">
+            Today's Progress
+          </span>
+
+          <span className="font-medium text-white">
             {completed}/{habits.length}
           </span>
         </div>
 
-        <div className="h-2 rounded-full bg-muted">
+        <div className="h-2 overflow-hidden rounded-full bg-white/10">
           <div
-            className="h-2 rounded-full bg-primary transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-orange-400 to-yellow-300 transition-all duration-500"
             style={{
               width: `${progress}%`,
             }}
           />
         </div>
       </div>
-    </section>
+    </GlassPanel>
   );
 }

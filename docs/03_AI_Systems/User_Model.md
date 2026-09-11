@@ -1,617 +1,507 @@
-# User Model
+# Odyssey User Model
 
-| Field | Details |
-|---|---|
-| **Project** | Odyssey |
-| **System** | User Model |
-| **Version** | 1.1 |
-| **Status** | Draft |
-| **Owner** | AI Team |
-| **Created** | 30 July 2026 |
-| **Last Updated** | 30 July 2026 |
+Version: 1.0
+Status: MVP
+Owner: AI Brain
 
 ---
 
-# Overview
+# Purpose
 
-The User Model is Odyssey's structured representation of an individual user.
+The User Model represents everything Odyssey knows about a person.
 
-Rather than storing only profile information, it continuously develops an understanding of who the user is, what they want to achieve, how they learn, how they make decisions, and how they grow over time.
+It is the foundation of personalization.
 
-Every recommendation, coaching conversation, roadmap, learning experience, and reflection insight is generated using the User Model.
+Every recommendation, reminder, insight and conversation should be generated using this model.
 
-It answers one central question:
+The goal is NOT to collect as much data as possible.
 
-> **"Who is this person, and how can Odyssey best support their growth?"**
-
----
-
-# Vision
-
-Every Odyssey user should experience a platform that feels uniquely designed for them.
-
-No two users should receive identical guidance because no two growth journeys are identical.
-
-The User Model enables Odyssey to personalize every interaction by continuously learning from goals, learning progress, behaviors, preferences, and reflections.
+The goal is to collect only the information that helps Odyssey understand the user and reduce their mental load.
 
 ---
 
-# Objectives
+# Design Principles
 
-The User Model should:
+The AI should
 
-- Build a deep understanding of every user.
-- Continuously evolve through experience.
-- Support personalization across the platform.
-- Adapt as users grow.
-- Preserve meaningful long-term context.
-- Improve recommendation quality over time.
-- Respect user privacy and control.
+✓ Learn gradually
 
----
+✓ Never assume
 
-# Core Responsibilities
+✓ Explain recommendations
 
-The User Model owns:
+✓ Respect privacy
 
-- User Profile
-- Goals
-- Skills
-- Interests
-- Learning Preferences
-- Motivation Style
-- Productivity Patterns
-- Reflection Profile
-- Growth History
-- Personal Preferences
+✓ Forget irrelevant information
 
-The User Model does **not**:
-
-- Store conversations.
-- Store files.
-- Coach users.
-- Generate recommendations.
-- Perform AI reasoning.
+✓ Remember meaningful information
 
 ---
 
-# User Profile
+# User Layers
 
-The User Profile contains stable information used for personalization.
+Odyssey understands users in six layers.
 
-Examples include:
-
-- Name
-- Age (optional)
-- Occupation
-- Education
-- Time Zone
-- Preferred Language
-- Experience Level
-
-This information provides the initial context for Odyssey before personalization begins.
-
----
-
-# Goals
-
-The User Model stores:
-
-- Active goals
-- Completed goals
-- Goal history
-- Long-term ambitions
-- Short-term objectives
-- Goal priorities
-
-Example
-
-```text
-Career
+Identity
 
 ↓
 
-Become AI Engineer
+Vision
 
 ↓
 
-Current Goal
-
-Learn Machine Learning
+Current Life
 
 ↓
 
-Today's Mission
+Daily Context
 
-Decision Trees
+↓
+
+Behavior
+
+↓
+
+Memories
+
 ```
 
-Goals evolve over time and influence coaching, recommendations, and learning plans.
-
 ---
 
-# Skills
+# Layer 1 — Identity
 
-Each skill contains:
+Changes rarely.
 
-- Skill Name
-- Mastery Level
-- Confidence Level
-- Learning Progress
-- Last Practiced
-- Related Skills
-- Recommended Next Topics
+```
+Name
 
-Example
+Preferred Name
 
-| Skill | Mastery |
-|--------|----------|
-| Python | 80% |
-| Machine Learning | 45% |
-| SQL | 70% |
+Age
 
----
+Timezone
 
-# Interests
+Occupation
 
-Examples include:
+Education
 
-- Artificial Intelligence
-- Robotics
-- Design
-- Finance
-- Entrepreneurship
-- Music
+Languages
 
-Interests help Odyssey personalize examples, projects, articles, books, and learning recommendations.
+Personality
 
----
-
-# Learning Preferences
-
-The User Model continuously learns how the user prefers to learn.
-
-Examples include:
-
-- Visual learning
-- Reading
-- Hands-on practice
-- Interactive exercises
-- Project-based learning
-- Video lessons
-
-Preferences are updated gradually as Odyssey observes user behavior.
-
----
-
-# Motivation Style
-
-Different users respond to different types of encouragement.
-
-Examples include:
-
-- Achievement
-- Curiosity
-- Career Growth
-- Creativity
-- Competition
-- Helping Others
-
-The AI Coach adapts its communication style based on these motivations.
-
----
-
-# Productivity Patterns
-
-The User Model identifies productive work habits.
-
-Examples include:
-
-- Peak productivity hours
-- Preferred work session length
-- Average focus duration
-- Break frequency
-- Weekly consistency
-- Energy trends
-
-Example
-
-```text
-Peak Productivity
-
-8:00 AM – 11:00 AM
-
-↓
-
-Recommend Deep Work
-
-↓
-
-Schedule Learning Sessions
-
-↓
-
-Avoid Heavy Study After 9 PM
+Working Style
 ```
 
-These patterns help Odyssey recommend better schedules rather than fixed routines.
+Purpose
+
+Help Odyssey communicate naturally.
 
 ---
 
-# Behavioral Insights
+# Layer 2 — Vision
 
-The User Model identifies recurring behavioral patterns.
+Who is this person becoming?
 
-Examples include:
+```
+Dream Career
 
-- Learning consistency
-- Goal completion trends
-- Preferred difficulty level
-- Frequently skipped tasks
-- Common distractions
-- Revision habits
-- Reflection consistency
-- Habit formation
+Dream Lifestyle
 
-Behavioral insights are built from repeated observations instead of isolated events, allowing personalization to improve gradually over time.
-# Reflection Profile
+Dream Country
 
-The Reflection Profile extends the User Model by capturing long-term patterns derived from user reflections.
+Values
 
-Rather than storing raw journal entries as personality labels, Odyssey records meaningful observations that improve personalization while respecting user privacy.
+Mission
 
-Reflection Intelligence is responsible for generating these observations.
+Manifestation
 
-The User Model stores only structured insights.
+Vision Board
+
+Life Goals
+```
+
+Example
+
+```
+Dream Career
+
+AI Engineer
+
+Mission
+
+Build products that improve people's lives.
+
+Values
+
+Health
+
+Growth
+
+Freedom
+```
+
+This becomes Odyssey's compass.
 
 ---
 
-## Stores
+# Layer 3 — Current Life
 
-The Reflection Profile may include:
+Life changes in seasons.
 
-- Reflection History
-- Recurring Themes
-- Motivation Drivers
-- Energy Patterns
-- Confidence Trends
-- Focus Patterns
-- Habit Consistency
-- Growth Milestones
-- Preferred Reflection Style
-- Areas of Improvement
+Instead of treating everything equally,
+
+Odyssey understands what season the user is in.
+
+```
+Current Season
+
+Current Projects
+
+Current Responsibilities
+
+Current Challenges
+
+Current Priorities
+```
+
+Example
+
+```
+Season
+
+Placement Preparation
+
+Projects
+
+Odyssey
+
+Hydroponics
+
+Responsibilities
+
+College
+
+Fitness
+```
+
+---
+
+# Layer 4 — Daily Context
+
+Changes every day.
+
+```
+Today's Tasks
+
+Deadlines
+
+Appointments
+
+Energy
+
+Mood
+
+Available Time
+```
+
+Purpose
+
+Generate today's recommendations.
+
+---
+
+# Layer 5 — Behavior
+
+Learns automatically.
+
+```
+Preferred Work Hours
+
+Average Focus Time
+
+Preferred Break Duration
+
+Learning Style
+
+Productivity Patterns
+
+Morning Routine
+
+Evening Routine
+```
 
 Examples
 
-Recurring Themes
+```
+Works best
 
-- Fear of failure
-- Curiosity about AI
-- Time management challenges
-- Increased confidence after completing projects
+9–12 AM
 
-Growth Indicators
+Usually distracted
 
-- More consistent journaling
-- Better recovery after setbacks
-- Increased learning confidence
-- Stronger goal commitment
+After lunch
 
-These observations continuously evolve as Odyssey learns more about the user.
+Focus Length
 
----
-
-# Preferences
-
-Examples include:
-
-- Notification preferences
-- Theme
-- Daily reminder time
-- Preferred session length
-- Weekly planning day
-- Preferred coaching style
-- Reflection frequency
-- Daily briefing style
-
-Preferences allow Odyssey to adapt its experience without changing the user's goals.
-
----
-
-# Experience Model
-
-The Experience Model represents the user's long-term growth journey.
-
-Examples include:
-
-- Skills learned
-- Projects completed
-- Certifications
-- Career milestones
-- Personal achievements
-- Learning streaks
-- Major reflections
-- Significant breakthroughs
-
-Rather than tracking isolated accomplishments, the Experience Model captures meaningful progress across months and years.
-
----
-
-# Data Sources
-
-The User Model continuously receives structured updates from Odyssey's systems.
-
-### Product Systems
-
-- Onboarding Engine
-- Goal Engine
-- Daily Growth Engine
-- Reflection Intelligence
-
-### Intelligence Systems
-
-- Memory System
-- AI Coach
-
-### Analytics
-
-- Analytics Engine
-
-### User Input
-
-- User Feedback
-- Manual Profile Updates
-
-The User Model never infers information from raw conversations alone.
-
-Instead, each system contributes structured observations relevant to its own responsibilities.
-
----
-
-# Data Consumers
-
-The following systems use the User Model:
-
-- AI Brain
-- AI Coach
-- Recommendation Engine
-- Mission Control
-- Daily Growth Engine
-- Growth Map
-- Reflection Intelligence
-
-The User Model acts as the central source of personalization across Odyssey.
-
----
-
-# User Model Lifecycle
-
-```text
-User joins Odyssey
-        │
-        ▼
-Onboarding
-        │
-        ▼
-Initial User Model Created
-        │
-        ▼
-Goals Updated
-        │
-        ▼
-Learning Progress Recorded
-        │
-        ▼
-Reflection Intelligence Generates Insights
-        │
-        ▼
-Behavior Observed
-        │
-        ▼
-User Model Updated
-        │
-        ▼
-Recommendations Improve
-        │
-        ▼
-Coaching Becomes More Personalized
+80 minutes
 ```
 
 ---
 
-# Adaptation Strategy
+# Layer 6 — Memories
 
-The User Model evolves continuously rather than relying on static information.
+Only meaningful memories.
+
+NOT every task.
+
+```
+Milestones
+
+Personal Wins
+
+Important Conversations
+
+Lessons Learned
+
+Achievements
+
+Difficult Periods
+```
 
 Examples
 
-User learns faster than expected
+```
+Built first MVP
+
+Completed degree
+
+Finished first marathon
+
+First internship
+
+Started reading habit
+```
+
+---
+
+# What Odyssey Should Never Remember
+
+Passwords
+
+OTP
+
+Bank Details
+
+Private Messages
+
+Medical Records (unless explicitly requested)
+
+Embarrassing mistakes
+
+Temporary thoughts
+
+---
+
+# Learning Sources
+
+Odyssey learns from
+
+Planner
 
 ↓
 
-Increase learning difficulty
-
----
-
-User changes career goals
+Journal
 
 ↓
 
-Generate a new roadmap
-
----
-
-User begins studying at night
+Brain Dump
 
 ↓
 
-Adjust recommended learning schedule
-
----
-
-User repeatedly reflects on burnout
+Habits
 
 ↓
 
-Recommend recovery strategies
-
----
-
-User consistently enjoys project-based learning
+Goals
 
 ↓
 
-Prioritize practical learning experiences
+Vision
+
+↓
+
+Knowledge
+
+↓
+
+AI Conversations
 
 ---
 
-The User Model should evolve gradually based on repeated observations instead of reacting to isolated events.
-# Privacy Principles
+# Confidence
 
-The User Model is built on the principle that personalization should always remain under the user's control.
+Every memory has confidence.
 
-Odyssey must:
+```
+High
 
-- Store only information necessary for personalization.
-- Clearly explain why information is collected.
-- Allow users to edit their profile.
-- Allow users to delete stored information.
-- Allow users to disable specific personalization features.
-- Allow users to review inferred preferences.
-- Never manipulate users through hidden personalization.
+User explicitly stated
 
-Users remain the owners of their personal data.
+--------------
 
----
+Medium
 
-# Reflection Privacy
+Repeated behavior
 
-Reflection data is among the most personal information stored by Odyssey.
+--------------
 
-To protect user trust:
+Low
 
-- Raw journal entries remain separate from the User Model.
-- The User Model stores only structured insights generated by Reflection Intelligence.
-- Users can delete reflections at any time.
-- Users can choose what Odyssey remembers.
-- Users can disable reflection-based personalization.
-- Reflection insights are never shared without explicit permission.
+AI inference
+```
 
-Reflection should empower users—not expose them.
+The AI should never present low-confidence assumptions as facts.
 
 ---
 
-# Functional Requirements
+# AI Learning Rules
 
-The User Model shall:
+The AI should
 
-- Store user characteristics.
-- Track goals and progress.
-- Maintain skill profiles.
-- Record learning preferences.
-- Maintain a Reflection Profile.
-- Update continuously through structured observations.
-- Support personalization across Odyssey.
-- Allow manual profile corrections.
-- Support multiple simultaneous goals.
-- Preserve long-term growth history.
+Observe
 
----
+↓
 
-# Non-Functional Requirements
+Recommend
 
-The User Model must:
+↓
 
-- Scale efficiently for millions of users.
-- Maintain data consistency.
-- Support near real-time updates.
-- Be secure and privacy-first.
-- Preserve historical changes.
-- Integrate with every AI subsystem.
-- Remain modular and extensible.
+Watch Response
 
----
+↓
 
-# Success Metrics
+Learn
 
-The User Model is successful if:
+↓
 
-- Recommendations become increasingly relevant.
-- Users feel understood rather than categorized.
-- Coaching improves over time.
-- Personalization increases engagement.
-- Users rarely repeat the same information.
-- Reflection insights improve recommendation quality.
-- Users trust Odyssey with their personal growth journey.
+Improve
+
+Example
+
+User rejects morning workouts.
+
+↓
+
+AI tries evening workouts.
+
+↓
+
+User accepts.
+
+↓
+
+Confidence increases.
 
 ---
 
-# Future Enhancements
+# User Control
 
-## Personalization
+The user can
 
-- Personality adaptation
-- Dynamic coaching styles
-- Long-term growth forecasting
-- Adaptive motivation modeling
+View memories
 
----
+Edit memories
 
-## Reflection
+Delete memories
 
-- Reflection timeline
-- Life event tracking
-- Growth milestones
-- Reflection summaries
-- Seasonal trend analysis
+Ask why something is remembered
+
+Disable learning
+
+Export data
 
 ---
 
-## Career
+# Memory Lifecycle
 
-- Professional profile generation
-- Portfolio insights
-- Skill market analysis
-- Career readiness scoring
+New
 
----
+↓
 
-## Collaboration
+Observed
 
-- Mentor profiles
-- Team growth profiles
-- Shared learning preferences
+↓
 
----
+Confirmed
 
-## Health & Well-being
+↓
 
-- Energy forecasting
-- Habit health indicators
-- Wearable integration
-- Recovery recommendations
+Useful
 
----
+↓
 
-# Open Questions
+Archived
 
-Future versions should explore:
+↓
 
-- Should inferred preferences require user approval?
-- How should conflicting behaviors be resolved?
-- Should preferences naturally decay over time?
-- How much personalization should happen automatically?
-- Which observations should be permanent versus temporary?
-- How should the User Model explain changes to users?
+Forgotten
+
+Not every memory should live forever.
 
 ---
 
-# Summary
+# User Growth Timeline
 
-The User Model is Odyssey's evolving understanding of the person behind the screen.
+Instead of storing tasks,
 
-It combines goals, skills, learning preferences, productivity patterns, reflections, experiences, and long-term growth into a unified representation that powers every personalized experience within Odyssey.
+Odyssey stores growth.
 
-Rather than acting as a static profile, the User Model continuously learns through structured observations generated across Odyssey's ecosystem while respecting user privacy, transparency, and control.
+Example
 
-By serving as the foundation for the AI Brain, AI Coach, Recommendation Engine, Memory System, and Reflection Intelligence, the User Model enables Odyssey to provide increasingly intelligent, explainable, and human-centered guidance throughout every stage of a user's personal growth journey.
+2026
+
+↓
+
+Graduated
+
+↓
+
+Built Odyssey MVP
+
+↓
+
+Started Placement Prep
+
+↓
+
+First Internship
+
+↓
+
+Moved Abroad
+
+↓
+
+First Startup
+
+Years later,
+
+Odyssey becomes a timeline of the user's life.
+
+---
+
+# Success Criteria
+
+A new AI should be able to read only this model and answer
+
+Who is this user?
+
+What matters to them?
+
+What are they working on?
+
+How do they learn?
+
+What should they do today?
+
+Without reading any other part of the database.

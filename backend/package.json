@@ -1,0 +1,31 @@
+{
+  "name": "odyssey-backend",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Backend for Odyssey and JARVIS",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "contract:emit": "prisma contract emit"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "@prisma/orm-postgres": "^8.0.0-rc.8",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^5.1.0",
+    "openai": "^5.19.1",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
+    "@types/pg": "^8.23.1",
+    "prisma": "^8.0.0-rc.12",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}
