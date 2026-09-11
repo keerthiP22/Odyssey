@@ -10,6 +10,15 @@ import {
   setTaskCompleted,
   deleteTask,
 } from "./services/taskService.js";
+import {
+  createGoal,
+  getUserGoals,
+  setGoalCompleted,
+} from "./services/goalService.js";
+import {
+  createJournalEntry,
+  getUserJournalEntries,
+} from "./services/journalService.js";
 
 dotenv.config();
 
@@ -188,6 +197,111 @@ app.delete("/api/tasks/:id", async (req, res) => {
 
     return res.status(500).json({
       error: "Could not delete task.",
+    });
+  }
+});
+
+// ------------------------------------
+// GOALS
+// ------------------------------------
+
+app.get("/api/goals", async (_req, res) => {
+  try {
+    const user = await getDevelopmentUser();
+    const goals = await getUserGoals(user.id);
+
+    return res.json({ goals });
+  } catch (error) {
+    console.error("Goal retrieval error:", error);
+    return res.status(500).json({ error: "Could not retrieve goals." });
+  }
+});
+
+app.post("/api/goals", async (req, res) => {
+  try {
+    const { title, description } = req.body;
+
+    if (!title || typeof title !== "string") {
+      return res.status(400).json({ error: "Goal title is required." });
+    }
+
+    const user = await getDevelopmentUser();
+    const goal = await createGoal(
+      user.id,
+      title,
+      typeof description === "string" && description.trim()
+        ? description.trim()
+        : undefined
+    );
+
+    return res.status(201).json({ goal });
+  } catch (error) {
+    console.error("Goal creation error:", error);
+    return res.status(500).json({ error: "Could not create goal." });
+  }
+});
+
+app.patch("/api/goals/:id/complete", async (req, res) => {
+  try {
+    const goalId = Number(req.params.id);
+    const { completed } = req.body;
+
+    if (!Number.isInteger(goalId)) {
+      return res.status(400).json({ error: "Invalid goal ID." });
+    }
+
+    if (typeof completed !== "boolean") {
+      return res.status(400).json({
+        error: "completed must be true or false.",
+      });
+    }
+
+    const user = await getDevelopmentUser();
+    const goal = await setGoalCompleted(user.id, goalId, completed);
+
+    return res.json({ goal });
+  } catch (error) {
+    console.error("Goal completion error:", error);
+    return res.status(500).json({ error: "Could not update goal." });
+  }
+});
+
+// ------------------------------------
+// JOURNAL
+// ------------------------------------
+
+app.get("/api/journal", async (_req, res) => {
+  try {
+    const user = await getDevelopmentUser();
+    const entries = await getUserJournalEntries(user.id);
+
+    return res.json({ entries });
+  } catch (error) {
+    console.error("Journal retrieval error:", error);
+    return res.status(500).json({
+      error: "Could not retrieve journal entries.",
+    });
+  }
+});
+
+app.post("/api/journal", async (req, res) => {
+  try {
+    const { content } = req.body;
+
+    if (!content || typeof content !== "string" || !content.trim()) {
+      return res.status(400).json({
+        error: "Journal content is required.",
+      });
+    }
+
+    const user = await getDevelopmentUser();
+    const entry = await createJournalEntry(user.id, content.trim());
+
+    return res.status(201).json({ entry });
+  } catch (error) {
+    console.error("Journal creation error:", error);
+    return res.status(500).json({
+      error: "Could not create journal entry.",
     });
   }
 });
