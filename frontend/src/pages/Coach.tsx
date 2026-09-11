@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { API_URL } from "@/services/api";
 
 interface Message {
   id: number;
@@ -19,6 +20,7 @@ export default function Coach() {
   ]);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const sendMessage = async (event: FormEvent) => {
     event.preventDefault();
@@ -38,10 +40,11 @@ export default function Coach() {
     setMessages((current) => [...current, userMessage]);
     setMessage("");
     setIsLoading(true);
+    setError("");
 
     try {
       const response = await fetch(
-        "http://localhost:5001/api/jarvis/chat",
+        `${API_URL}/api/jarvis/chat`,
         {
           method: "POST",
           headers: {
@@ -83,6 +86,7 @@ export default function Coach() {
         ...current,
         errorMessage,
       ]);
+      setError("JARVIS is temporarily unavailable.");
     } finally {
       setIsLoading(false);
     }
@@ -104,6 +108,12 @@ export default function Coach() {
           you're trying to figure out.
         </p>
       </div>
+
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-300/10 bg-red-400/[0.04] px-4 py-3 text-sm text-red-300">
+          {error}
+        </div>
+      )}
 
       <div className="rounded-[28px] border border-white/10 bg-white/5 p-5 backdrop-blur-xl">
         <div className="min-h-[420px] space-y-4">
