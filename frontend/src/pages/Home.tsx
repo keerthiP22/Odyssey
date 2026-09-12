@@ -4,6 +4,7 @@ import Greeting from "@/components/home/Greeting";
 import MorningRitual from "@/components/home/MorningRitual";
 import IdentityCard from "@/components/home/IdentityCard";
 import BeforeWeBegin from "@/components/home/BeforeWeBegin";
+import WeatherCard from "@/components/home/WeatherCard";
 
 const RITUAL_COUNT = 4;
 const INITIAL_MISSION_PROGRESS = 65;
@@ -134,8 +135,14 @@ export default function Home() {
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4 pb-24 sm:space-y-5 sm:pb-6">
-      {/* 1. Greeting */}
-      <Greeting userName="Keerthi" />
+      {/* 1. Greeting (+ quiet weather companion) */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-4">
+        <div className="min-w-0 flex-1">
+          <Greeting userName="Keerthi" />
+        </div>
+
+        <WeatherCard />
+      </div>
 
       {/* 2. Morning Ritual + Today's Mission */}
       <div className="grid gap-5 lg:grid-cols-2">

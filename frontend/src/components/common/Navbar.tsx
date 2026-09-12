@@ -83,8 +83,6 @@ export default function Navbar() {
           className="relative rounded-xl p-2 text-slate-400 transition hover:bg-white/5 hover:text-white"
         >
           <Bell size={18} />
-
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-violet-400" />
         </button>
 
         <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 font-semibold text-white">

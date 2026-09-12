@@ -1,8 +1,8 @@
 import {
   ArrowRight,
   Brain,
-  Compass,
   Lightbulb,
+  Sparkle,
   Wind,
   X,
 } from "lucide-react";
@@ -104,8 +104,8 @@ export default function BeforeWeBegin({
         <div className="flex items-start justify-between gap-6">
           <div>
             <div className="flex items-center gap-2">
-              <Compass
-                size={14}
+              <Sparkle
+                size={13}
                 strokeWidth={1.8}
                 className="text-violet-300"
               />
@@ -146,7 +146,7 @@ export default function BeforeWeBegin({
                     openActivity(activity.id)
                   }
                   aria-label={`Start ${activity.title}`}
-                  className={`group relative flex w-full items-start gap-3 rounded-xl border px-4 py-3.5 text-left transition-all duration-200 hover:-translate-y-px hover:border-white/[0.13] hover:bg-white/[0.035] ${
+                  className={`group relative flex w-full items-start gap-3 rounded-xl border px-4 py-3.5 text-left transition-colors duration-200 hover:border-white/[0.13] hover:bg-white/[0.035] ${
                     isRecommended
                       ? "border-violet-300/20 bg-violet-400/[0.055]"
                       : "border-white/[0.06] bg-white/[0.018]"

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -19,8 +20,10 @@ import {
   createJournalEntry,
   getUserJournalEntries,
 } from "./services/journalService.js";
+import { getJarvisMessages } from "./services/jarvisMessageService.js";
 
 dotenv.config();
+
 
 const app = express();
 const PORT = 5001;
@@ -67,6 +70,30 @@ app.post("/api/jarvis/chat", async (req, res) => {
     });
   }
 });
+
+
+// ------------------------------------
+// GET JARVIS MESSAGES
+// ------------------------------------
+
+app.get("/api/jarvis/messages", async (_req, res) => {
+  try {
+    const user = await getDevelopmentUser();
+
+    const messages = await getJarvisMessages(user.id);
+
+    return res.json({
+      messages,
+    });
+  } catch (error) {
+    console.error("JARVIS message retrieval error:", error);
+
+    return res.status(500).json({
+      error: "Could not retrieve JARVIS messages.",
+    });
+  }
+});
+
 
 
 // ------------------------------------
