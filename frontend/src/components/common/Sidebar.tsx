@@ -18,38 +18,62 @@ export default function Sidebar() {
   return (
     <aside
       className={`
-        relative
+        sticky
+        top-0
         z-40
         flex
-        h-screen
-        flex-shrink-0
+        h-dvh
+        min-h-dvh
+        shrink-0
+        self-start
         flex-col
         overflow-hidden
-        border-r border-white/[0.06]
+        border-r
+        border-white/[0.06]
         bg-[#0D1422]
-        transition-[width] duration-300 ease-out
+        transition-[width]
+        duration-300
+        ease-out
         ${isSidebarOpen ? "w-[228px]" : "w-[72px]"}
       `}
     >
-      {/* Header */}
+      {/* ─────────────────────────────────────────
+          HEADER
+      ───────────────────────────────────────── */}
 
       <div
         className={`
-          flex h-[96px] shrink-0 items-center
-          ${isSidebarOpen ? "px-5" : "justify-center px-3"}
+          flex
+          h-[96px]
+          shrink-0
+          items-center
+          ${
+            isSidebarOpen
+              ? "px-5"
+              : "justify-center px-3"
+          }
         `}
       >
         <Logo collapsed={!isSidebarOpen} />
       </div>
 
-      <div className="mx-5 h-px bg-white/[0.055]" />
+      <div className="mx-5 h-px shrink-0 bg-white/[0.055]" />
 
-      {/* Navigation */}
+      {/* ─────────────────────────────────────────
+          NAVIGATION
+      ───────────────────────────────────────── */}
 
       <nav
+        aria-label="Primary navigation"
         className={`
-          flex flex-1 flex-col
-          ${isSidebarOpen ? "px-3 py-6" : "items-center px-2 py-5"}
+          min-h-0
+          flex-1
+          overflow-y-auto
+          ${
+            isSidebarOpen
+              ? "px-3 py-6"
+              : "items-center px-2 py-5"
+          }
         `}
       >
         <div className="flex flex-col gap-1.5">
@@ -91,12 +115,20 @@ export default function Sidebar() {
         </div>
       </nav>
 
-      {/* Bottom */}
+      {/* ─────────────────────────────────────────
+          BOTTOM
+      ───────────────────────────────────────── */}
 
       <div
         className={`
-          shrink-0 border-t border-white/[0.055]
-          ${isSidebarOpen ? "px-3 pb-4 pt-4" : "px-2 pb-4 pt-4"}
+          shrink-0
+          border-t
+          border-white/[0.055]
+          ${
+            isSidebarOpen
+              ? "px-3 pb-4 pt-4"
+              : "px-2 pb-4 pt-4"
+          }
         `}
       >
         <SidebarItem

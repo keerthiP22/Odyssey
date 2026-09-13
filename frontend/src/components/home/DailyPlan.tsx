@@ -22,6 +22,7 @@ interface PlannerTask {
   time: string;
   task: string;
   completed: boolean;
+  priority: number;
 }
 
 function getTodayLabel() {
@@ -48,6 +49,7 @@ function convertTask(task: Task): PlannerTask {
     time,
     task: task.title,
     completed: task.completed,
+    priority: task.priority,
   };
 }
 
@@ -56,6 +58,7 @@ function getTodayDateTime(time: string) {
   const [hours, minutes] = time.split(":").map(Number);
 
   today.setHours(hours, minutes, 0, 0);
+
   return today.toISOString();
 }
 
@@ -73,7 +76,13 @@ export default function DailyPlan() {
 
       const databaseTasks = await getTasks();
 
-      setTasks(databaseTasks.map(convertTask));
+      const convertedTasks = databaseTasks.map(convertTask);
+
+      setTasks(
+        convertedTasks.sort((a, b) =>
+          a.time.localeCompare(b.time)
+        )
+      );
     } catch (error) {
       console.error("Could not load Planner tasks:", error);
 
@@ -89,44 +98,57 @@ export default function DailyPlan() {
     loadTasks();
   }, []);
 
-  const completedCount = useMemo(
-    () => tasks.filter((task) => task.completed).length,
+  const activeTasks = useMemo(
+    () =>
+      tasks
+        .filter((task) => !task.completed)
+        .sort((a, b) => a.time.localeCompare(b.time)),
     [tasks]
   );
 
-  const remainingCount = tasks.length - completedCount;
+  const completedTasks = useMemo(
+    () =>
+      tasks
+        .filter((task) => task.completed)
+        .sort((a, b) => a.time.localeCompare(b.time)),
+    [tasks]
+  );
+
+  const completedCount = completedTasks.length;
+  const remainingCount = activeTasks.length;
 
   const progress =
     tasks.length === 0
       ? 0
       : Math.round((completedCount / tasks.length) * 100);
 
+  const nextTask = activeTasks[0] ?? null;
 
- const toggleTask = async (task: PlannerTask) => {
-  try {
-    setError("");
+  const toggleTask = async (task: PlannerTask) => {
+    try {
+      setError("");
 
-    const updatedTask = await setTaskCompleted(
-      task.id,
-      !task.completed
-    );
+      const updatedTask = await setTaskCompleted(
+        task.id,
+        !task.completed
+      );
 
-    setTasks((current) =>
-      current.map((item) =>
-        item.id === task.id
-          ? {
-              ...item,
-              completed: updatedTask.completed,
-            }
-          : item
-      )
-    );
-  } catch (error) {
-    console.error("Could not update task:", error);
+      setTasks((current) =>
+        current.map((item) =>
+          item.id === task.id
+            ? {
+                ...item,
+                completed: updatedTask.completed,
+              }
+            : item
+        )
+      );
+    } catch (error) {
+      console.error("Could not update task:", error);
 
-    setError("Could not update that task.");
-  }
-}; 
+      setError("Could not update that task.");
+    }
+  };
 
   const handleDeleteTask = async (id: number) => {
     try {
@@ -169,6 +191,7 @@ export default function DailyPlan() {
         time: taskTime,
         task: createdTask.title,
         completed: createdTask.completed,
+        priority: createdTask.priority,
       };
 
       setTasks((current) =>
@@ -186,22 +209,26 @@ export default function DailyPlan() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-5 pb-6">
-      {/* Header */}
-      <section className="relative overflow-hidden rounded-[26px] border border-white/[0.07] bg-[#141927] px-6 py-6 shadow-[0_18px_55px_rgba(0,0,0,0.16)] sm:px-8 sm:py-7">
-        <div className="pointer-events-none absolute right-8 top-7 text-[13px] text-violet-300/25">
-          ✦
-        </div>
+    <div className="mx-auto w-full max-w-5xl space-y-5 pb-8">
+      {/* ─────────────────────────────────────────────
+          HEADER
+      ───────────────────────────────────────────── */}
+
+      <section className="glass relative overflow-hidden rounded-[26px] px-6 py-6 sm:px-8 sm:py-7">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-10 -top-16 h-44 w-44 rounded-full bg-violet-400/[0.045] blur-3xl"
+        />
 
         <div className="relative">
           <div className="flex items-center gap-2">
             <CalendarDays
               size={14}
               strokeWidth={1.8}
-              className="text-violet-300"
+              className="text-violet-300/80"
             />
 
-            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-violet-300/80">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-violet-300/75">
               Planner
             </p>
           </div>
@@ -210,7 +237,7 @@ export default function DailyPlan() {
             Today's plan
           </h1>
 
-          <p className="mt-1.5 text-sm text-[#929AB2]">
+          <p className="mt-1.5 text-sm text-[#8992A7]">
             {getTodayLabel()}
           </p>
 
@@ -221,54 +248,89 @@ export default function DailyPlan() {
         </div>
       </section>
 
-      {/* Error */}
+      {/* ─────────────────────────────────────────────
+          ERROR
+      ───────────────────────────────────────────── */}
+
       {error && (
         <div className="rounded-xl border border-red-300/10 bg-red-400/[0.04] px-4 py-3 text-sm text-red-300">
           {error}
         </div>
       )}
 
-      {/* Progress */}
-      <section className="rounded-[24px] border border-white/[0.07] bg-[#141927] px-5 py-5 sm:px-7">
-        <div className="flex items-center justify-between gap-4">
+      {/* ─────────────────────────────────────────────
+          PROGRESS
+      ───────────────────────────────────────────── */}
+
+      <section className="glass rounded-[22px] px-5 py-5 sm:px-6">
+        <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-300/75">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-300/70">
               Day progress
             </p>
 
-            <p className="mt-1.5 text-sm text-[#929AB2]">
-              {completedCount} of {tasks.length} tasks complete
+            <p className="mt-1.5 text-sm text-[#8992A7]">
+              {tasks.length === 0
+                ? "Nothing planned yet"
+                : remainingCount === 0
+                  ? "Everything planned is complete"
+                  : `${remainingCount} ${
+                      remainingCount === 1
+                        ? "task"
+                        : "tasks"
+                    } left`}
             </p>
           </div>
 
-          <span className="text-sm font-semibold text-[#C9C4E8]">
-            {progress}%
-          </span>
+          <div className="text-right">
+            <span className="text-lg font-semibold tracking-tight text-[#D5D1EA]">
+              {progress}%
+            </span>
+
+            <p className="mt-0.5 text-[10px] text-[#626C82]">
+              {completedCount}/{tasks.length} complete
+            </p>
+          </div>
         </div>
 
-        <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+        <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/[0.055]">
           <div
-            className="h-full rounded-full bg-violet-400/80 transition-all duration-300"
-            style={{ width: `${progress}%` }}
+            className="h-full rounded-full bg-violet-400/75 transition-all duration-500"
+            style={{
+              width: `${progress}%`,
+            }}
           />
         </div>
       </section>
 
-      {/* Add task */}
-      <section className="rounded-[24px] border border-white/[0.07] bg-[#141927] px-5 py-5 sm:px-7">
-        <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-300/75">
-            Add to your day
-          </p>
+      {/* ─────────────────────────────────────────────
+          WHAT'S NEXT
+      ───────────────────────────────────────────── */}
 
-          <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.025em] text-[#F2F0F2]">
-            What's next?
-          </h2>
+      <section className="glass rounded-[24px] px-5 py-5 sm:px-7">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-300/70">
+              Add to your day
+            </p>
+
+            <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.025em] text-[#F2F0F2]">
+              What's next?
+            </h2>
+          </div>
+
+          {nextTask && (
+            <div className="hidden rounded-full border border-violet-300/10 bg-violet-400/[0.045] px-3 py-1.5 sm:block">
+              <span className="text-[10px] font-medium text-violet-200/75">
+                Next · {nextTask.time}
+              </span>
+            </div>
+          )}
         </div>
 
         <form
           onSubmit={addTask}
-          className="mt-4 grid gap-2.5 sm:grid-cols-[1fr_130px_auto]"
+          className="mt-4 grid gap-2.5 sm:grid-cols-[1fr_125px_auto]"
         >
           <input
             type="text"
@@ -276,9 +338,9 @@ export default function DailyPlan() {
             onChange={(event) =>
               setTaskName(event.target.value)
             }
-            placeholder="Add a task..."
+            placeholder="What needs your attention?"
             aria-label="Task name"
-            className="min-h-11 rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 text-sm text-white outline-none transition placeholder:text-[#626C82] focus:border-violet-300/25 focus:bg-white/[0.04]"
+            className="min-h-11 rounded-xl border border-white/[0.07] bg-white/[0.022] px-4 text-sm text-white outline-none transition placeholder:text-[#626C82] focus:border-violet-300/25 focus:bg-white/[0.04]"
           />
 
           <input
@@ -288,12 +350,12 @@ export default function DailyPlan() {
               setTaskTime(event.target.value)
             }
             aria-label="Task time"
-            className="min-h-11 rounded-xl border border-white/[0.07] bg-white/[0.025] px-4 text-sm text-[#B7BECE] outline-none transition focus:border-violet-300/25"
+            className="min-h-11 rounded-xl border border-white/[0.07] bg-white/[0.022] px-4 text-sm text-[#B7BECE] outline-none transition focus:border-violet-300/25 focus:bg-white/[0.04]"
           />
 
           <button
             type="submit"
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-violet-500 px-5 text-sm font-medium text-white transition hover:bg-violet-400 active:bg-violet-400"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-violet-500 px-5 text-sm font-medium text-white shadow-[0_8px_24px_rgba(124,92,255,0.15)] transition hover:bg-violet-400 active:scale-[0.99]"
           >
             <Plus size={16} />
             Add task
@@ -301,11 +363,14 @@ export default function DailyPlan() {
         </form>
       </section>
 
-      {/* Schedule */}
-      <section className="rounded-[24px] border border-white/[0.07] bg-[#121624] px-5 py-5 sm:px-7 sm:py-6">
-        <div className="flex items-center justify-between gap-4">
+      {/* ─────────────────────────────────────────────
+          YOUR DAY
+      ───────────────────────────────────────────── */}
+
+      <section className="glass rounded-[24px] px-5 py-5 sm:px-7 sm:py-6">
+        <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-300/75">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-300/70">
               Schedule
             </p>
 
@@ -314,123 +379,206 @@ export default function DailyPlan() {
             </h2>
           </div>
 
-        </div>
-
-        <div className="mt-5 space-y-2.5">
-          {isLoading ? (
-            <div className="rounded-xl border border-white/[0.06] px-5 py-10 text-center text-sm text-[#69738A]">
-              Loading your tasks...
-            </div>
-          ) : tasks.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-white/[0.08] px-5 py-10 text-center">
-              <CalendarDays
-                size={22}
-                className="mx-auto text-[#626C82]"
-              />
-
-              <p className="mt-3 text-sm font-medium text-[#AEB5C6]">
-                Your schedule is clear.
-              </p>
-
-              <p className="mt-1 text-xs text-[#626C82]">
-                Add something small to get started.
-              </p>
-            </div>
-          ) : (
-            tasks.map((item) => (
-              <div
-                key={item.id}
-                className={`group flex items-center gap-3 rounded-xl border px-3.5 py-3 transition-colors sm:gap-4 sm:px-4 ${
-                  item.completed
-                    ? "border-white/[0.045] bg-white/[0.012]"
-                    : "border-white/[0.06] bg-white/[0.018] hover:border-white/[0.10] hover:bg-white/[0.03]"
-                }`}
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleTask(item)}
-                  aria-label={
-                    item.completed
-                      ? `Completed ${item.task}`
-                      : `Complete ${item.task}`
-                  }
-                  aria-pressed={item.completed}
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition ${
-                    item.completed
-                      ? "border-violet-400/40 bg-violet-400/[0.12] text-violet-200"
-                      : "border-white/[0.09] bg-white/[0.025] text-transparent hover:border-violet-300/25 hover:bg-violet-400/[0.06]"
-                  }`}
-                >
-                  <Check
-                    size={17}
-                    strokeWidth={2.3}
-                  />
-                </button>
-
-                <Clock3
-                  size={16}
-                  className={`hidden shrink-0 sm:block ${
-                    item.completed
-                      ? "text-[#4F586B]"
-                      : "text-violet-300/65"
-                  }`}
-                />
-
-                <div className="min-w-0 flex-1">
-                  <p
-                    className={`text-xs font-medium sm:text-sm ${
-                      item.completed
-                        ? "text-[#626C82] line-through"
-                        : "text-[#D9DCE5]"
-                    }`}
-                  >
-                    {item.task}
-                  </p>
-
-                  <p
-                    className={`mt-0.5 text-[10px] ${
-                      item.completed
-                        ? "text-[#4F586B]"
-                        : "text-[#69738A]"
-                    }`}
-                  >
-                    {item.time}
-                  </p>
-                </div>
-
-                {item.completed ? (
-                  <CheckCircle2
-                    size={17}
-                    className="shrink-0 text-violet-300/45"
-                  />
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleDeleteTask(item.id)
-                    }
-                    aria-label={`Delete ${item.task}`}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-[#4F586B] opacity-100 transition hover:bg-red-400/[0.07] hover:text-red-300 sm:opacity-0 sm:group-hover:opacity-100"
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                )}
-              </div>
-            ))
+          {activeTasks.length > 0 && (
+            <p className="text-xs text-[#626C82]">
+              {activeTasks.length} active
+            </p>
           )}
         </div>
 
-        {tasks.length > 0 && remainingCount === 0 && (
-          <div className="mt-4 rounded-xl border border-violet-300/10 bg-violet-400/[0.045] px-4 py-3 text-center">
-            <p className="text-xs font-medium text-violet-200">
-              Everything planned for today is complete.
-            </p>
+        <div className="mt-5">
+          {isLoading ? (
+            <div className="rounded-2xl border border-white/[0.06] px-5 py-12 text-center">
+              <div className="mx-auto h-5 w-5 animate-pulse rounded-full bg-violet-400/20" />
 
-            <p className="mt-1 text-[10px] text-[#727C91]">
-              Nice work. You can let the rest of the day breathe.
-            </p>
-          </div>
-        )}
+              <p className="mt-3 text-sm text-[#69738A]">
+                Loading your day...
+              </p>
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-white/[0.08] px-5 py-12 text-center">
+              <CalendarDays
+                size={22}
+                className="mx-auto text-[#626C82]"
+                strokeWidth={1.5}
+              />
+
+              <p className="mt-3 text-sm font-medium text-[#AEB5C6]">
+                Your day is open.
+              </p>
+
+              <p className="mt-1 text-xs text-[#626C82]">
+                Add one small thing to give it shape.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {/* ACTIVE TASKS */}
+
+              {activeTasks.length > 0 && (
+                <div className="space-y-2">
+                  {activeTasks.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className="group flex items-center gap-3 rounded-2xl border border-white/[0.065] bg-white/[0.018] px-3.5 py-3 transition-all hover:border-violet-300/[0.14] hover:bg-white/[0.03] sm:gap-4 sm:px-4"
+                    >
+                      {/* Completion button */}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          toggleTask(item)
+                        }
+                        aria-label={`Complete ${item.task}`}
+                        aria-pressed={false}
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/[0.09] bg-white/[0.025] text-transparent transition hover:border-violet-300/30 hover:bg-violet-400/[0.07] hover:text-violet-200"
+                      >
+                        <Check
+                          size={17}
+                          strokeWidth={2.3}
+                        />
+                      </button>
+
+                      {/* Time */}
+                      <div className="hidden w-[54px] shrink-0 sm:block">
+                        <div className="flex items-center gap-1.5">
+                          <Clock3
+                            size={13}
+                            className="text-violet-300/55"
+                            strokeWidth={1.8}
+                          />
+
+                          <span className="text-[11px] font-medium tabular-nums text-[#737D93]">
+                            {item.time}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Task */}
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-[#D9DCE5]">
+                          {item.task}
+                        </p>
+
+                        <div className="mt-1 flex items-center gap-2 sm:hidden">
+                          <Clock3
+                            size={11}
+                            className="text-violet-300/55"
+                            strokeWidth={1.8}
+                          />
+
+                          <span className="text-[10px] tabular-nums text-[#69738A]">
+                            {item.time}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Current task indicator */}
+                      {index === 0 && (
+                        <span className="hidden rounded-full border border-violet-300/10 bg-violet-400/[0.045] px-2.5 py-1 text-[9px] font-medium uppercase tracking-[0.14em] text-violet-200/65 md:block">
+                          Next
+                        </span>
+                      )}
+
+                      {/* Delete */}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleDeleteTask(item.id)
+                        }
+                        aria-label={`Delete ${item.task}`}
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#4F586B] transition hover:bg-red-400/[0.07] hover:text-red-300 sm:opacity-0 sm:group-hover:opacity-100"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* NO ACTIVE TASKS */}
+
+              {activeTasks.length === 0 && (
+                <div className="rounded-2xl border border-violet-300/10 bg-violet-400/[0.035] px-5 py-8 text-center">
+                  <CheckCircle2
+                    size={22}
+                    className="mx-auto text-violet-300/65"
+                    strokeWidth={1.6}
+                  />
+
+                  <p className="mt-3 text-sm font-medium text-violet-100/85">
+                    Your planned work is complete.
+                  </p>
+
+                  <p className="mt-1 text-xs text-[#69738A]">
+                    You can let the rest of the day breathe.
+                  </p>
+                </div>
+              )}
+
+              {/* COMPLETED */}
+
+              {completedTasks.length > 0 && (
+                <div className="pt-5">
+                  <div className="mb-2.5 flex items-center gap-3">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#626C82]">
+                      Completed
+                    </p>
+
+                    <div className="h-px flex-1 bg-white/[0.045]" />
+
+                    <span className="text-[10px] text-[#4F586B]">
+                      {completedTasks.length}
+                    </span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    {completedTasks.map((item) => (
+                      <div
+                        key={item.id}
+                        className="group flex items-center gap-3 rounded-xl border border-white/[0.035] bg-white/[0.008] px-3.5 py-2.5 opacity-70 transition-opacity hover:opacity-100 sm:px-4"
+                      >
+                        <button
+                          type="button"
+                          onClick={() =>
+                            toggleTask(item)
+                          }
+                          aria-label={`Restore ${item.task}`}
+                          aria-pressed={true}
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-violet-400/20 bg-violet-400/[0.08] text-violet-200/80 transition hover:border-violet-300/35 hover:bg-violet-400/[0.12]"
+                        >
+                          <Check
+                            size={14}
+                            strokeWidth={2.4}
+                          />
+                        </button>
+
+                        <Clock3
+                          size={13}
+                          className="hidden shrink-0 text-[#4F586B] sm:block"
+                          strokeWidth={1.7}
+                        />
+
+                        <p className="min-w-0 flex-1 truncate text-xs text-[#626C82] line-through">
+                          {item.task}
+                        </p>
+
+                        <span className="hidden shrink-0 text-[10px] tabular-nums text-[#4F586B] sm:block">
+                          {item.time}
+                        </span>
+
+                        <CheckCircle2
+                          size={15}
+                          className="shrink-0 text-violet-300/30"
+                          strokeWidth={1.7}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );
