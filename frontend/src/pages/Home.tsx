@@ -6,8 +6,9 @@ import IdentityCard from "@/components/home/IdentityCard";
 import BeforeWeBegin from "@/components/home/BeforeWeBegin";
 import WeatherCard from "@/components/home/WeatherCard";
 
+import { getTasks, type Task } from "@/services/taskService";
+
 const RITUAL_COUNT = 4;
-const INITIAL_MISSION_PROGRESS = 65;
 
 function getTodayKey() {
   const today = new Date();
@@ -21,10 +22,6 @@ function getTodayKey() {
 
 function getRitualStorageKey() {
   return `odyssey:morning-ritual:${getTodayKey()}`;
-}
-
-function getMissionStorageKey() {
-  return `odyssey:mission:${getTodayKey()}`;
 }
 
 function loadTodayRituals(): boolean[] {
@@ -51,42 +48,34 @@ function loadTodayRituals(): boolean[] {
   }
 }
 
-function loadTodayMissionProgress(): number {
-  try {
-    const stored = localStorage.getItem(getMissionStorageKey());
-
-    if (stored === null) {
-      return INITIAL_MISSION_PROGRESS;
-    }
-
-    const parsed = Number(stored);
-
-    if (
-      !Number.isFinite(parsed) ||
-      parsed < 0 ||
-      parsed > 100
-    ) {
-      return INITIAL_MISSION_PROGRESS;
-    }
-
-    return parsed;
-  } catch {
-    return INITIAL_MISSION_PROGRESS;
-  }
-}
-
 export default function Home() {
   const [rituals, setRituals] = useState<boolean[]>(() =>
     loadTodayRituals()
   );
 
-  const [missionProgress, setMissionProgress] = useState<number>(() =>
-    loadTodayMissionProgress()
-  );
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasksLoading, setTasksLoading] = useState(true);
+  const [tasksError, setTasksError] = useState(false);
 
   useEffect(() => {
     setRituals(loadTodayRituals());
-    setMissionProgress(loadTodayMissionProgress());
+
+    async function loadTasks() {
+      try {
+        setTasksError(false);
+
+        const loadedTasks = await getTasks();
+
+        setTasks(loadedTasks);
+      } catch (error) {
+        console.error("Home task loading error:", error);
+        setTasksError(true);
+      } finally {
+        setTasksLoading(false);
+      }
+    }
+
+    loadTasks();
   }, []);
 
   const handleRitualToggle = (index: number) => {
@@ -108,34 +97,32 @@ export default function Home() {
     });
   };
 
-  const handleMissionProgress = () => {
-    setMissionProgress((current) => {
-      if (current >= 100) {
-        return 100;
-      }
-
-      const updated = Math.min(current + 5, 100);
-
-      try {
-        localStorage.setItem(
-          getMissionStorageKey(),
-          String(updated)
-        );
-      } catch {
-        // Keep the UI usable if localStorage is unavailable.
-      }
-
-      return updated;
-    });
-  };
-
   const ritualsComplete =
     rituals.length === RITUAL_COUNT &&
     rituals.every(Boolean);
 
+  const activeTasks = tasks.filter(
+  (task) => !task.completed
+);
+
+const completedTaskCount = tasks.filter(
+  (task) => task.completed
+).length;
+
+const missionProgress =
+  tasks.length === 0
+    ? 0
+    : Math.round(
+        (completedTaskCount / tasks.length) * 100
+      );
+
+const missionTask = [...activeTasks].sort(
+  (a, b) => b.priority - a.priority
+)[0];
+
   return (
     <div className="mx-auto w-full max-w-6xl space-y-4 pb-24 sm:space-y-5 sm:pb-6">
-      {/* 1. Greeting (+ quiet weather companion) */}
+      {/* 1. Greeting + weather */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-4">
         <div className="min-w-0 flex-1">
           <Greeting userName="Keerthi" />
@@ -144,7 +131,7 @@ export default function Home() {
         <WeatherCard />
       </div>
 
-      {/* 2. Morning Ritual + Today's Mission */}
+      {/* 2. Ritual + Today's Mission */}
       <div className="grid gap-5 lg:grid-cols-2">
         <MorningRitual
           rituals={rituals}
@@ -152,8 +139,10 @@ export default function Home() {
         />
 
         <IdentityCard
+          task={missionTask}
           progress={missionProgress}
-          onContinue={handleMissionProgress}
+          loading={tasksLoading}
+          error={tasksError}
         />
       </div>
 

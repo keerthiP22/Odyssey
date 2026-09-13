@@ -3,7 +3,9 @@ import {
   Coffee,
   Dumbbell,
   GlassWater,
+  Moon,
   Sparkles,
+  Sun,
 } from "lucide-react";
 
 interface MorningRitualProps {
@@ -11,29 +13,131 @@ interface MorningRitualProps {
   onToggle: (index: number) => void;
 }
 
-const ritualItems = [
-  {
-    label: "Drink water",
-    icon: GlassWater,
-  },
-  {
-    label: "Freshen up",
-    icon: Coffee,
-  },
-  {
-    label: "Move your body",
-    icon: Dumbbell,
-  },
-  {
-    label: "Breakfast",
-    icon: Check,
-  },
-];
+type RitualItem = {
+  label: string;
+  icon: typeof GlassWater;
+};
+
+function getRitualContent() {
+  const hour = new Date().getHours();
+
+  // Morning
+  if (hour < 12) {
+    return {
+      eyebrow: "Morning ritual",
+      title: "Prepare yourself",
+      description: "Start gently.",
+      footer: "Take it one step at a time",
+      items: [
+        {
+          label: "Drink water",
+          icon: GlassWater,
+        },
+        {
+          label: "Freshen up",
+          icon: Coffee,
+        },
+        {
+          label: "Move your body",
+          icon: Dumbbell,
+        },
+        {
+          label: "Breakfast",
+          icon: Check,
+        },
+      ] satisfies RitualItem[],
+    };
+  }
+
+  // Afternoon
+  if (hour < 17) {
+    return {
+      eyebrow: "Midday reset",
+      title: "Regain your momentum",
+      description: "Pause, reset, and continue.",
+      footer: "Keep it simple",
+      items: [
+        {
+          label: "Drink water",
+          icon: GlassWater,
+        },
+        {
+          label: "Take a short break",
+          icon: Coffee,
+        },
+        {
+          label: "Move your body",
+          icon: Dumbbell,
+        },
+        {
+          label: "Review priorities",
+          icon: Sun,
+        },
+      ] satisfies RitualItem[],
+    };
+  }
+
+  // Evening
+  if (hour < 21) {
+    return {
+      eyebrow: "Evening reset",
+      title: "Close the day gently",
+      description: "Slow down without losing momentum.",
+      footer: "Leave some room to breathe",
+      items: [
+        {
+          label: "Hydrate",
+          icon: GlassWater,
+        },
+        {
+          label: "Tidy your space",
+          icon: Sparkles,
+        },
+        {
+          label: "Move or stretch",
+          icon: Dumbbell,
+        },
+        {
+          label: "Reflect on today",
+          icon: Sun,
+        },
+      ] satisfies RitualItem[],
+    };
+  }
+
+  // Night
+  return {
+    eyebrow: "Night wind-down",
+    title: "Let the day settle",
+    description: "Nothing more needs to be rushed.",
+    footer: "Tomorrow can wait",
+    items: [
+      {
+        label: "Put your phone away",
+        icon: Moon,
+      },
+      {
+        label: "Wind down",
+        icon: Coffee,
+      },
+      {
+        label: "Reflect on today",
+        icon: Sparkles,
+      },
+      {
+        label: "Get ready for sleep",
+        icon: Moon,
+      },
+    ] satisfies RitualItem[],
+  };
+}
 
 export default function MorningRitual({
   rituals,
   onToggle,
 }: MorningRitualProps) {
+  const ritualContent = getRitualContent();
+
   const completedCount = rituals.filter(Boolean).length;
 
   return (
@@ -41,15 +145,15 @@ export default function MorningRitual({
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-violet-300/80 sm:tracking-[0.3em]">
-            Morning ritual
+            {ritualContent.eyebrow}
           </p>
 
           <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.03em] text-[#F2F0F2]">
-            Prepare yourself
+            {ritualContent.title}
           </h2>
 
           <p className="mt-1 text-sm text-[#929AB2]">
-            Start gently.
+            {ritualContent.description}
           </p>
         </div>
 
@@ -58,9 +162,8 @@ export default function MorningRitual({
         </div>
       </div>
 
-      {/* 2 × 2 on mobile, 2 × 2 on larger screens as well */}
       <div className="mt-5 grid grid-cols-2 gap-2.5">
-        {ritualItems.map((item, index) => {
+        {ritualContent.items.map((item, index) => {
           const Icon = item.icon;
           const completed = rituals[index];
 
@@ -84,10 +187,7 @@ export default function MorningRitual({
                       : "bg-white/[0.045] text-[#7F899F] group-hover:text-[#AEB5C6]"
                   }`}
                 >
-                  <Icon
-                    size={16}
-                    strokeWidth={1.8}
-                  />
+                  <Icon size={16} strokeWidth={1.8} />
                 </span>
 
                 <span
@@ -101,12 +201,9 @@ export default function MorningRitual({
                 </span>
               </span>
 
-              {/* 44px touch area around the small visual check */}
               <span
                 className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${
-                  completed
-                    ? "text-white"
-                    : "text-transparent"
+                  completed ? "text-white" : "text-transparent"
                 }`}
               >
                 <span
@@ -117,10 +214,7 @@ export default function MorningRitual({
                   }`}
                 >
                   {completed && (
-                    <Check
-                      size={12}
-                      strokeWidth={2.5}
-                    />
+                    <Check size={12} strokeWidth={2.5} />
                   )}
                 </span>
               </span>
@@ -134,7 +228,7 @@ export default function MorningRitual({
         className="mt-4 flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-violet-300/30"
       >
         <Sparkles size={11} />
-        <span>Take it one step at a time</span>
+        <span>{ritualContent.footer}</span>
       </div>
     </section>
   );

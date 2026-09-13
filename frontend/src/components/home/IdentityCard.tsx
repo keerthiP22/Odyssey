@@ -1,13 +1,23 @@
-import { ArrowRight, Check, Target } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Target,
+} from "lucide-react";
+
+import type { Task } from "@/services/taskService";
 
 interface IdentityCardProps {
+  task?: Task;
   progress: number;
-  onContinue: () => void;
+  loading: boolean;
+  error: boolean;
 }
 
 export default function IdentityCard({
+  task,
   progress,
-  onContinue,
+  loading,
+  error,
 }: IdentityCardProps) {
   const isComplete = progress >= 100;
 
@@ -30,48 +40,87 @@ export default function IdentityCard({
             </p>
 
             <h2 className="mt-1.5 text-lg font-semibold leading-6 tracking-[-0.025em] text-[#F2F0F2] sm:text-xl">
-              Finish Odyssey MVP Home
+              {loading
+                ? "Finding your next step..."
+                : error
+                  ? "Your mission is unavailable"
+                  : task
+                    ? task.title
+                    : "All caught up"}
             </h2>
           </div>
         </div>
 
         <p className="mt-4 max-w-lg text-sm leading-6 text-[#929AB2]">
-          One thing matters most today. Everything else can wait.
+          {loading
+            ? "Checking your tasks."
+            : error
+              ? "We couldn't load your tasks right now."
+              : task
+                ? "One thing matters most right now. Everything else can wait."
+                : "You've completed everything on your list. Take a breath."}
         </p>
 
-        <div className="mt-5">
-          <div className="mb-2 flex items-center justify-between text-xs">
-            <span className="text-[#737D93]">
-              Progress
-            </span>
+        {loading ? (
+          <div className="mt-5">
+            <div className="mb-2 flex items-center justify-between text-xs">
+              <span className="text-[#737D93]">
+                Progress
+              </span>
 
-            <span className="font-medium text-[#AEB5C6]">
-              {progress}%
-            </span>
+              <span className="font-medium text-[#AEB5C6]">
+                Loading...
+              </span>
+            </div>
+
+            <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+              <div className="h-full w-1/3 animate-pulse rounded-full bg-violet-400/50" />
+            </div>
           </div>
-
-          <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
-            <div
-              className="h-full rounded-full bg-violet-400/80 transition-all duration-200"
-              style={{ width: `${progress}%` }}
-            />
+        ) : error ? (
+          <div className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-white/[0.05] px-4 py-2 text-sm font-medium text-[#AEB5C6]">
+            Try again later
           </div>
-        </div>
-
-        {isComplete ? (
+        ) : !task ? (
           <div className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-lg bg-violet-400/[0.12] px-4 py-2 text-sm font-medium text-violet-200">
             <Check size={14} />
-            Mission complete
+            You're all caught up
           </div>
         ) : (
-          <button
-            type="button"
-            onClick={onContinue}
-            className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-violet-400 active:bg-violet-400"
-          >
-            Continue mission
-            <ArrowRight size={14} />
-          </button>
+          <>
+            <div className="mt-5">
+              <div className="mb-2 flex items-center justify-between text-xs">
+                <span className="text-[#737D93]">
+                  Progress
+                </span>
+
+                <span className="font-medium text-[#AEB5C6]">
+                  {progress}%
+                </span>
+              </div>
+
+              <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
+                <div
+                  className="h-full rounded-full bg-violet-400/80 transition-all duration-300"
+                  style={{
+                    width: `${progress}%`,
+                  }}
+                />
+              </div>
+            </div>
+
+            {isComplete ? (
+              <div className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-lg bg-violet-400/[0.12] px-4 py-2 text-sm font-medium text-violet-200">
+                <Check size={14} />
+                Mission complete
+              </div>
+            ) : (
+              <div className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white">
+                Continue mission
+                <ArrowRight size={14} />
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>
