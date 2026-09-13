@@ -9,4 +9,5 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
   ],
+    envPrefix: ["VITE_", "API_"],
 });
