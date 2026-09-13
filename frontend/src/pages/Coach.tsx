@@ -1,9 +1,7 @@
 import { Send, Sparkle } from "lucide-react";
 import type { FormEvent, KeyboardEvent } from "react";
 import { useEffect, useRef, useState } from "react";
-
-const API_URL = "http://localhost:5001";
-
+import { API_URL } from "../services/api";
 interface Message {
   id: number;
   role: "user" | "jarvis";
