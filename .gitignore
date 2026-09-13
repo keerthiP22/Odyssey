@@ -25,3 +25,8 @@ build/
 
 # Coverage
 coverage/
+.neon
+
+# Neon local agent tooling
+skills-lock.json
+.agents/
